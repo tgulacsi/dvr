@@ -1,0 +1,15 @@
+[Unit]
+Description=DASH video service for %i
+
+[Service]
+User=ffmpeg
+Group=video
+# https://www.jungledisk.com/blog/2017/07/03/live-streaming-mpeg-dash-with-raspberry-pi-3/
+ExecStart=/usr/bin/ffmpeg -y -i rtsp://192.168.1.232:554/avn=%i -c:v copy -an -keyint_min 10 -g 100 -map 0:v -f dash -min_seg_duration 4000 -use_template 1 -use_timeline 0 -init_seg_name init-%i-$RepresentationID$.mp4 -media_seg_name %i-$RepresentationID$-$Number$.mp4 -remove_at_exit 1 -window_size 100 -extra_window_size 10 /var/www/www.gthomas.eu/a32/dvr/%i/%i.mpd
+StandardOutput=null
+StandardError=journal
+Restart=always
+RestartSec=30s
+
+[Install]
+WantedBy=multi-user.target
